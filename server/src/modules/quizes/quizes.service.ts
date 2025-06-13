@@ -1,10 +1,13 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { PrismaService } from "src/prisma";
 import { CreateQuizDtos, UpdateQuizDtos } from "./dtos";
+import { FsHelpers } from "src/helper";
 
 @Injectable()
 export class QuizesService{
-    constructor(private prisma:PrismaService){}
+    constructor(private prisma:PrismaService,
+                private fs:FsHelpers
+    ){}
 
     async getAll(){
         const quizes = await this.prisma.quizes.findMany()
@@ -14,8 +17,13 @@ export class QuizesService{
         }
     }
 
-    async create(payload:CreateQuizDtos){
+    async create(payload:CreateQuizDtos,image:Express.Multer.File){
+        let imageName = ''
+        if(image){
+            imageName = await this.fs.uploadFile(image)
+        }
         const quiz = await this.prisma.quizes.create({data:{
+            imgUrl:imageName,
             question:payload.question,
             collectionId:payload.collectionId}
         })

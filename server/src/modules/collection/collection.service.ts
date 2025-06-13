@@ -21,7 +21,9 @@ export class CollectionService {
             throw new BadRequestException('Please choice another title!')
         }
 
-        const collection = await this.prisma.quizCollection.create({data:{name:paylaod.name}})
+        const collection = await this.prisma.quizCollection.create({data:{name:paylaod.name,
+            userId:paylaod.userId
+        }})
 
         return {
             data:collection

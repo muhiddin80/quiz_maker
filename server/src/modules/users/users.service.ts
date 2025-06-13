@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { PrismaService } from "src/prisma";
 import { UpdateUserDtos } from "./dtos/update.user.dtos";
+import * as bcrypt from "bcryptjs"
 
 @Injectable()
 export class UserService{
@@ -19,11 +20,12 @@ export class UserService{
         if(!founded){
             throw new BadRequestException('User not found!')
         }
+        const hashPassword = bcrypt.hashSync(payload.password)
 
         await this.prisma.user.update({where:{id},data:{
                     username:payload.username||founded.username,
                     email:payload.email||founded.email,
-                    password:payload.password||founded.password
+                    password:hashPassword||founded.password
         }})
 
         return "Successfully updated!"

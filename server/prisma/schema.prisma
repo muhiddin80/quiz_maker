@@ -1,3 +1,8 @@
+enum Role {
+  ADMIN @map("ADMIN")
+  USER @map("USER")
+}
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -12,6 +17,9 @@ model User{
   username String @map("username") @db.VarChar()
   email String @unique() @map("email") @db.VarChar()
   password String @map("password") @db.VarChar()
+  role Role @default(USER) @map("role")
+  token String? @map("token") @db.VarChar()
+  collections QuizCollection[]
 
   @@id([id])
   @@map("users")
@@ -20,7 +28,10 @@ model User{
 model QuizCollection{
   id Int @default(autoincrement()) @map("id") @db.Integer
   name String @map("name") @db.VarChar()
+  userId Int @map("user_id") @db.Integer
   quizes Quizes[]
+
+  user User @relation(fields: [userId],references: [id],onUpdate: NoAction,onDelete: Cascade)
 
   @@id([id])
   @@map("quiz_collection")
@@ -29,6 +40,7 @@ model QuizCollection{
 model Quizes {
   id Int @default(autoincrement()) @map("id") @db.Integer
   question String @map("quizes") @db.VarChar()
+  imgUrl String? @map("img_url") @db.VarChar()
   collectionId Int @map("collection_id") @db.Integer
   answers Answers[]
   correctAnswer CorrectAnswer[]

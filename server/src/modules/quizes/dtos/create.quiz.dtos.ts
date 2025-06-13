@@ -10,4 +10,7 @@ export class CreateQuizDtos{
     @ApiProperty({type:'integer'})
     @Type(()=>Number)
     collectionId:number;
+
+    @ApiProperty({type:'string',format:'binary',required:false})
+    image:Express.Multer.File
 }
