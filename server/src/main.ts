@@ -8,25 +8,26 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('api')
   app.enableCors({
-    allowedHeaders:['authorization'],
-    methods:['GET','POST','PUT','PATCH','DELETE'],
-    optionSuccessStatus:200,
-    origin:(reqOrigin,cd)=>{
+    origin: (reqOrigin, callback) => {
       const allowedOrigins = process.env.CORS_ORIGINS
-      ? process.env.CORS_ORIGINS.split(',')
-      :'*';
-
-    if(allowedOrigins.includes(reqOrigin)||allowedOrigins.includes('*'))
-      return cd(null);
-    else
-      cd(
-          new NotAcceptableException(
-            `Sending request to ${reqOrigin} is forbidden!`
-          ),
-      );
+        ? process.env.CORS_ORIGINS.split(',')
+        : [];
+  
+      if (!reqOrigin || allowedOrigins.includes(reqOrigin) || allowedOrigins.includes('*')) {
+        callback(null, true);
+      } else {
+        callback(
+          new NotAcceptableException(`CORS: Request from origin ${reqOrigin} is not allowed`),
+          false
+        );
+      }
     },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+    allowedHeaders: ['authorization', 'content-type'],
+    optionsSuccessStatus: 200,
   });
-
+  
   
   const config = new DocumentBuilder()
     .setTitle('Test mater')

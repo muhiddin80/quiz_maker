@@ -34,6 +34,7 @@ export class AuthService{
         })
 
         return {
+            message:"Successfully registered!",
             data:user
         }
     }
@@ -50,6 +51,7 @@ export class AuthService{
         }
 
         return {
+            message:"Successfully logged!",
             data:founded
         }
     }
