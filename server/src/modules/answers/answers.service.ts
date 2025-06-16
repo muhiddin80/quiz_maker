@@ -7,7 +7,7 @@ export class AnswerService{
     constructor(private prisma:PrismaService){}
 
     async getAll(){
-        const answers = await this.prisma.answers.findMany()
+        const answers = await this.prisma.answers.findMany({include:{translations:true}})
         
         return {
             count:answers.length,
@@ -16,7 +16,7 @@ export class AnswerService{
     }
 
     async create(payload:AnswersDto){
-        const answer = await this.prisma.answers.create({data:{answer:payload.answer,
+        const answer = await this.prisma.answers.create({data:{
             quizId:payload.quizId
         }})
 
@@ -32,7 +32,7 @@ export class AnswerService{
             throw new NotFoundException('Answer not found!')
         }
 
-        await this.prisma.answers.update({where:{id},data:{answer:payload.answer||founded.answer,
+        await this.prisma.answers.update({where:{id},data:{
                 quizId:payload.quizId||founded.quizId
         }})
 

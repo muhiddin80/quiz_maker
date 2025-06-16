@@ -28,7 +28,6 @@
 
 2. quizes
   - question
-  - answers []
   - created_at
   - updated_at
 

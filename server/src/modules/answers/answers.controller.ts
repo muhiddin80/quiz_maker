@@ -1,7 +1,10 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, UseGuards } from "@nestjs/common";
 import { AnswerService } from "./answers.service";
 import { AnswersDto } from "./dtos";
+import { CheckRolesGuard } from "src/guards/check.role.guard";
+import { CheckToken } from "src/guards/check.token.guard";
 
+@UseGuards(CheckRolesGuard,CheckToken)
 @Controller('answers')
 export class AnswerController {
     constructor(private service:AnswerService){}

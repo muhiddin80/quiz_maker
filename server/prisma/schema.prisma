@@ -12,6 +12,16 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Language {
+  code String  @db.VarChar() 
+  name String
+  translations QuizTranslation[]
+  answerTranslations AnswerTranslation[]
+
+  @@map("language")
+  @@id([code])
+}
+
 model User{
   id Int @default(autoincrement()) @map("id") @db.Integer
   username String @map("username") @db.VarChar()
@@ -38,35 +48,62 @@ model QuizCollection{
 }
 
 model Quizes {
-  id Int @default(autoincrement()) @map("id") @db.Integer
-  question String @map("quizes") @db.VarChar()
+  id Int  @default(autoincrement()) @map("id") @db.Integer
   imgUrl String? @map("img_url") @db.VarChar()
   collectionId Int @map("collection_id") @db.Integer
+  collection QuizCollection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
   answers Answers[]
   correctAnswer CorrectAnswer[]
+  translations QuizTranslation[]
 
-  collection QuizCollection @relation(fields: [collectionId],references: [id],onDelete: Cascade,onUpdate: NoAction)
+@@id([id])
+  @@map("quizes")
+}
+
+model QuizTranslation {
+  id Int  @default(autoincrement())
+  question String @db.Text()
+  quizId Int
+  languageCode String
+
+  quiz Quizes @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  language Language @relation(fields: [languageCode], references: [code], onDelete: Cascade)
 
   @@id([id])
-  @@map("quizes")
+  @@unique([quizId,languageCode])
+  @@map("quiz_translation")
 }
 
 model Answers {
   id Int @default(autoincrement()) @map("id") @db.Integer
-  answer String @map("answer") @db.VarChar()
   quizId Int @map("quiz_id") @db.Integer
-
-  quizField Quizes @relation(fields: [quizId],references: [id],onDelete: Cascade,onUpdate: NoAction)
+  quizField Quizes @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  translations AnswerTranslation[]
 
   @@id([id])
   @@map("answers")
 }
 
-model CorrectAnswer {
+model AnswerTranslation {
   id Int @default(autoincrement()) @map("id") @db.Integer
+  answer String @map("answer") @db.Text()
+  answerId Int @map("answer_id") @db.Integer
+  languageCode String
+
+  answerRef Answers @relation(fields: [answerId], references: [id], onDelete: Cascade)
+  language Language @relation(fields: [languageCode], references: [code], onDelete: Cascade)
+
+  @@unique([answerId])
+
+  @@id([id])
+  @@map("answer_translation")
+}
+
+model CorrectAnswer {
+  id Int @id @default(autoincrement())
   quizId Int @unique() @map("quiz_id") @db.Integer
   answerId Int @map("answer_id") @db.Integer
+  quizField Quizes @relation(fields: [quizId], references: [id], onDelete: Cascade)
 
-  quizField Quizes @relation(fields: [quizId],references: [id],onDelete: Cascade,onUpdate: NoAction)
-  @@id([id])
+  @@map("correct_answer")
 }

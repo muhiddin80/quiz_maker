@@ -27,6 +27,7 @@ export class CheckToken implements CanActivate{
         }
 
         const token = request.headers['authorization'];
+        console.log(token)
 
         if(!token|| !token.startsWith('Bearer')){
             throw new BadRequestException('Please enter your token!')
@@ -39,7 +40,7 @@ export class CheckToken implements CanActivate{
         }
 
         try {
-            const data = this.JwtService.verify(accessToken)
+            const data = this.JwtService.verify(accessToken,{secret:process.env.ACCESS_TOKEN_SECRET})
             request.userId = data?.id
             request.role=data?.role;
 

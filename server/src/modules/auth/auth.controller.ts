@@ -2,6 +2,8 @@ import { Body, Controller, Post, Query } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { LoginDto, RegisterDto } from "./dtos";
 import { ForgotPasswordDto } from "./dtos/forgot.password.dtos";
+import { ResetPasswordDto } from "./dtos/reset.password.dtos";
+import { ApiBody } from "@nestjs/swagger";
 
 @Controller('auth')
 export class AuthController{
@@ -23,6 +25,16 @@ export class AuthController{
     }
 
     @Post('reset_password')
+    @ApiBody({description: 'Create a new quiz',
+        schema: {
+          type: 'object',
+          properties: {
+            password: {
+              type: 'string'
+            },
+          },
+          required: ['password']
+        }})
     async resetPassword(@Body('password') password:string,
         @Query('token') token:string){
             return await this.service.resetPassword(password,token)

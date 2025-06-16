@@ -9,8 +9,9 @@ export class CheckFileSizePipe implements PipeTransform{
 
     transform(value: any, metadata: ArgumentMetadata) {
         if(!value) return value;
-        if(value.size<this.size){
+        if(value.size>this.size){
             throw new BadRequestException('Send smaller file!')
         }
+        return value;
     }
 }

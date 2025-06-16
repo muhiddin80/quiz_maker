@@ -3,12 +3,13 @@ import { PrismaService } from "src/prisma";
 import * as bcrypt from "bcryptjs"
 import { LoginDto, RegisterDto } from "./dtos";
 import { ForgotPasswordDto } from "./dtos/forgot.password.dtos";
-import  crypto  from "node:crypto"
+import * as crypto  from "node:crypto"
 import { MailerService } from "@nestjs-modules/mailer";
+import { JwtService } from "@nestjs/jwt";
 
 @Injectable()
 export class AuthService{
-    constructor(private prisma:PrismaService,private MailService:MailerService){}
+    constructor(private prisma:PrismaService,private MailService:MailerService,private JwtService:JwtService){}
 
     async register(payload:RegisterDto){
         const founded = await this.prisma.user.findUnique({where:{email:payload.email}})
@@ -33,7 +34,10 @@ export class AuthService{
           </body>`
         })
 
+        const token = await this.JwtService.signAsync({id:user.id,role:user.role},{secret:process.env.ACCESS_TOKEN_SECRET})
+
         return {
+            return:token,
             message:"Successfully registered!",
             data:user
         }
@@ -49,8 +53,9 @@ export class AuthService{
         if(!isMatch){
             throw new BadRequestException('Invalid password!')
         }
-
+        const token = await this.JwtService.signAsync({id:founded.id,role:founded.role},{secret:process.env.ACCESS_TOKEN_SECRET})
         return {
+            token:token,
             message:"Successfully logged!",
             data:founded
         }
@@ -69,11 +74,17 @@ export class AuthService{
         await this.prisma.user.update({where:{email},data:{token:new_token}})
 
         await this.MailService.sendMail({
-            to:email,
-            subject:'Reset password!',
-            html:`<h2>Reset your email with this link!</h2>
-                    <a href="localhost:4000/auth/reset_password?token=${new_token}>Link</a>`
-        })
+            to: email,
+            subject: 'Reset password!',
+            html: `
+              <h2>Reset your password with this link:</h2>
+              <h4>${new_token}</h4>
+              <a href="http://localhost:4000/api/auth/reset_password?token=${new_token}">
+                Reset Password
+              </a>
+            `,
+          });
+          
 
         return "We send url to your email!"
     }
@@ -85,7 +96,7 @@ export class AuthService{
         }
         const passwordHash = bcrypt.hashSync(password)
 
-        await this.prisma.user.update({where:{email:founded.email},data:{password}})
+        await this.prisma.user.update({where:{email:founded.email},data:{password:passwordHash}})
         return 'Password successfully reseted!'
     }
 }
