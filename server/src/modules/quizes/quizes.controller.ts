@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
 import { QuizesService } from "./quizes.service";
 import { CreateQuizDtos, UpdateQuizDtos } from "./dtos";
 import { FileInterceptor } from "@nestjs/platform-express";
@@ -8,8 +8,9 @@ import { CheckRolesGuard } from "src/guards/check.role.guard";
 import { CheckToken } from "src/guards/check.token.guard";
 import { Protected, Roles } from "src/decorator";
 import { UserRoles } from "src/enum";
+import { QuizQuery } from "./dtos/quizes.query.dtos";
 
-@UseGuards(CheckRolesGuard,CheckToken)
+@UseGuards(CheckToken,CheckRolesGuard)
 @Controller('quizes')
 export class QuizesController {
     constructor(private service:QuizesService){}
@@ -18,8 +19,8 @@ export class QuizesController {
     @Get()
     @Protected(false)
     @Roles([UserRoles.ADMIN,UserRoles.USER])
-    async getAll(){
-        return await this.service.getAll()
+    async getAll(@Query() query:QuizQuery){
+        return await this.service.getAll(query)
     }
 
     @ApiBearerAuth()

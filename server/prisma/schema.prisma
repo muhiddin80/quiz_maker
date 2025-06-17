@@ -24,9 +24,9 @@ model Language {
 
 model User{
   id Int @default(autoincrement()) @map("id") @db.Integer
-  username String @map("username") @db.VarChar()
+  username String? @map("username") @db.VarChar()
   email String @unique() @map("email") @db.VarChar()
-  password String @map("password") @db.VarChar()
+  password String? @map("password") @db.VarChar()
   role Role @default(USER) @map("role")
   token String? @map("token") @db.VarChar()
   collections QuizCollection[]
@@ -93,7 +93,7 @@ model AnswerTranslation {
   answerRef Answers @relation(fields: [answerId], references: [id], onDelete: Cascade)
   language Language @relation(fields: [languageCode], references: [code], onDelete: Cascade)
 
-  @@unique([answerId])
+  @@unique([answerId,languageCode])
 
   @@id([id])
   @@map("answer_translation")

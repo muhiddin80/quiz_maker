@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query, UseGuards } from "@nestjs/common";
 import { CollectionService } from "./collection.service";
 import { CreateCollectionDto } from "./dtos";
 import { CheckToken } from "src/guards/check.token.guard";
@@ -6,6 +6,7 @@ import { CheckRolesGuard } from "src/guards/check.role.guard";
 import { ApiBearerAuth } from "@nestjs/swagger";
 import { Protected, Roles } from "src/decorator";
 import { UserRoles } from "src/enum";
+import { CollectionQuery } from "./dtos/collection.query.dtos";
 
 @UseGuards(CheckToken,CheckRolesGuard)
 @Controller('collection')
@@ -16,8 +17,8 @@ export class CollectionController {
     @Get()
     @Protected(false)
     @Roles([UserRoles.ADMIN,UserRoles.USER])
-    async getAll(){
-        return await this.service.getAll()
+    async getAll(@Query() query:CollectionQuery){
+        return await this.service.getAll(query)
     }
 
     @ApiBearerAuth()

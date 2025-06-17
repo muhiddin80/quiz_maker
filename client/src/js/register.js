@@ -1,8 +1,8 @@
 import "bootstrap/dist/css/bootstrap.min.css";
-import { registerUser, checkToken } from "../services/apiService.js";
+import { registerUser } from "../services/apiService.js";
 
 const registerForm = document.getElementById("register-form");
-const google = document.getElementById("google");
+const google = document.getElementById("google-btn");
 const errorP = document.querySelector(".errorP");
 
 // checkToken()
@@ -34,5 +34,5 @@ registerForm.addEventListener("submit", async (e) => {
 });
 
 google.addEventListener("click", () => {
-  window.location.href = "http://localhost:3000/api/auth/google/callback";
+  window.location.href = "http://localhost:4000/api/auth/google";
 });

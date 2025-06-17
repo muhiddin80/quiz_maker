@@ -21,8 +21,10 @@ export class CheckToken implements CanActivate{
         const ctx  = context.switchToHttp()
         const request = ctx.getRequest<Request & {role?:string,userId?:string}>()
 
+        console.log('hello')
         if(!isProtected){
             request.role=UserRoles.USER;
+            console.log(request.role)
             return true
         }
 
@@ -41,6 +43,7 @@ export class CheckToken implements CanActivate{
 
         try {
             const data = this.JwtService.verify(accessToken,{secret:process.env.ACCESS_TOKEN_SECRET})
+            console.log(data.role)
             request.userId = data?.id
             request.role=data?.role;
 

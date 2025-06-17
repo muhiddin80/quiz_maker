@@ -2,6 +2,7 @@ import { BadRequestException, Injectable } from "@nestjs/common";
 import { PrismaService } from "src/prisma";
 import { CreateQuizDtos, UpdateQuizDtos } from "./dtos";
 import { FsHelpers } from "src/helper";
+import { QuizQuery } from "./dtos/quizes.query.dtos";
 
 @Injectable()
 export class QuizesService{
@@ -9,10 +10,11 @@ export class QuizesService{
                 private fs:FsHelpers
     ){}
 
-    async getAll(){
+    async getAll(query:QuizQuery){
+        const offset = (query.page-1)*query.limit;
         const quizes = await this.prisma.quizes.findMany({include:{
             translations:true
-        }})
+        },take:query.limit,skip:offset})
         return {
             count:quizes.length,
             data:quizes
@@ -56,8 +58,6 @@ export class QuizesService{
     
             for (const key of Object.keys(payload.value)) {
                 const existing = existingTranslations.find(t => t.languageCode === key);
-    
-                console.log(founded.id)
                 if (existing) {
                     await this.prisma.quizTranslation.update({
                         data: {

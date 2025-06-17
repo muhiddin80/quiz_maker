@@ -1,6 +1,7 @@
 import { loginUser } from "../services/apiService";
 
 const loginForm = document.getElementById("login-form")
+const google = document.getElementById('google-btn')
 
 loginForm.addEventListener('submit',async (e) =>{
     e.preventDefault()
@@ -19,3 +20,7 @@ loginForm.addEventListener('submit',async (e) =>{
 
     loginForm.reset();
 })
+
+google.addEventListener("click", () => {
+    window.location.href = "http://localhost:4000/api/auth/google";
+});

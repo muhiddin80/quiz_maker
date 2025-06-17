@@ -5,9 +5,11 @@ import { PrismaService } from "src/prisma";
 import { MailerModule } from "@nestjs-modules/mailer";
 import { JwtModule, JwtService } from "@nestjs/jwt";
 import { ConfigModule } from "@nestjs/config";
+import { GoogleStrategy } from "./strategy/google.strategy";
+import { PassportModule } from "@nestjs/passport";
 
 @Module({
-    imports:[ConfigModule.forRoot({isGlobal:true}),MailerModule.forRoot({transport:{
+    imports:[PassportModule,ConfigModule.forRoot({isGlobal:true}),MailerModule.forRoot({transport:{
         service:'gmail',
         auth:{
             user:process.env.MAIL_USER,
@@ -21,7 +23,7 @@ import { ConfigModule } from "@nestjs/config";
         }
     })],
     controllers:[AuthController],
-    providers:[AuthService,PrismaService]
+    providers:[AuthService,PrismaService,GoogleStrategy]
 })
 
 export class AuthModule {}

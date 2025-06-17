@@ -1,17 +1,21 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { PrismaService } from "src/prisma";
 import { CreateCollectionDto } from "./dtos";
+import { CollectionQuery } from "./dtos/collection.query.dtos";
 
 @Injectable()
 export class CollectionService {
     constructor(private prisma:PrismaService){}
 
-    async getAll(){
-        const collections = await this.prisma.quizCollection.findMany()
+    async getAll(query:CollectionQuery){
+        const offset = (query.page-1)*query.limit;
+        const collections = await this.prisma.quizCollection.findMany({take:query.limit,skip:offset})
 
         return {
             count:collections.length,
-            data:collections
+            data:collections,
+            page:query.page,
+            limit:query.limit
         }
     }
 

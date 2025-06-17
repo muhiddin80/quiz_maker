@@ -19,3 +19,8 @@ export async function getQuizes() {
 export async function getCollection(){
     return await customAxios.get("/collection")
 }
+
+export async function forgotPassword(payload) {
+  return await customAxios.post('/auth/forgot_password',payload)
+}
+

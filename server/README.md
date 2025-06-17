@@ -31,6 +31,10 @@
   - created_at
   - updated_at
 
-3. correct_answer
+3. answers
+  - quiz_id
+  - answer
+
+4. correct_answer
   - question_id
   - answers_id  
