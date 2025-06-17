@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Type } from "class-transformer";
-import { IsString } from "class-validator";
+import { IsNumber, IsString } from "class-validator";
 
 export class CreateCollectionDto {
     @IsString()
@@ -9,5 +9,6 @@ export class CreateCollectionDto {
 
     @Type(()=>Number)
     @ApiProperty({type:'number',example:1})
+    @IsNumber()
     userId:number
 }

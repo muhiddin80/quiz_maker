@@ -17,7 +17,7 @@ export async function getQuizes() {
 }
 
 export async function getCollection(){
-    return await customAxios.get("/collection")
+    return await customAxios.get("/collection?limit=10&page=1")
 }
 
 export async function forgotPassword(payload) {

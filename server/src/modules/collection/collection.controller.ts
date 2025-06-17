@@ -26,6 +26,7 @@ export class CollectionController {
     @Protected(false)
     @Roles([UserRoles.ADMIN,UserRoles.USER])
     async create(@Body() payload:CreateCollectionDto){
+        console.log(payload)
         return await this.service.create(payload)
     }
 

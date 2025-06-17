@@ -8,8 +8,11 @@ export class CollectionService {
     constructor(private prisma:PrismaService){}
 
     async getAll(query:CollectionQuery){
-        const offset = (query.page-1)*query.limit;
-        const collections = await this.prisma.quizCollection.findMany({take:query.limit,skip:offset})
+        const page = Number(query.page) || 1;
+        const limit = Number(query.limit) || 10;
+        const offset = (page - 1) * limit;
+
+        const collections = await this.prisma.quizCollection.findMany({take:limit||10,skip:offset})
 
         return {
             count:collections.length,

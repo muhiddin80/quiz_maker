@@ -11,10 +11,12 @@ export class QuizesService{
     ){}
 
     async getAll(query:QuizQuery){
-        const offset = (query.page-1)*query.limit;
+        const page = Number(query.page) || 1;
+        const limit = Number(query.limit) || 10;
+        const offset = (page - 1) * limit;
         const quizes = await this.prisma.quizes.findMany({include:{
             translations:true
-        },take:query.limit,skip:offset})
+        },take:limit,skip:offset})
         return {
             count:quizes.length,
             data:quizes
